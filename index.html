@@ -96,9 +96,9 @@
             autoAddLabels: false, //allowed values: "true" - add the labels in LabelsToAdd to the card that is created; "false" (default) - don't auto-add labels
             labelsToAdd: ["ENTER_LABELS", "LABEL2"], //enter label names in this array to have them added to your card, if you wish.  Leave blank to add no labels
 
-            //developer
-            logErrors: false, //log errors in the console
-            demoMode: false, //don't actual make requests but pretend that they went through successfully
+            //developer - don't change these values unless you know what you're doing
+            debugMode: true, //log various things that are useful for debugging in the console
+            demoMode: false, //simulate various end results of requests.  accepted values: "success" - pretend that the request succeeded; "ANY_ERROR_CODE" - enter an error code used by this app, and the app will pretend the request failed with that error code
         };
 
         function initialize() {
