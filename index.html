@@ -33,39 +33,42 @@
         <br />
         <br />
         <form>
-            <label for="card-name" class="item-title">Assignment name:</label>
-            <br />
-            <input id="card-name" type="text" />
-            <br />
-            <br />
-            <label class="item-title">Description:</label>
-            <br />
-            <em>Auto-generated</em>
-            <br />
-            <br />
-            <label class="item-title">Due date:</label>
-            <br />
-            <em>The card due date will be this day at the time defined in Settings.</em>
-            <br />
-            <input type="radio" id="due-date-today" name="due-date">
-            <label for="due-date-today">Today</label>
-            <br />
-            <input type="radio" id="due-date-tomorrow" name="due-date">
-            <label for="due-date-tomorrow">Tomorrow</label>
-            <br />
-            <input type="radio" name="due-date">Tuesday
-            <br />
-            <input type="radio" name="due-date">Wednesday
-            <br />
-            <input type="radio" name="due-date">Thursday
-            <br />
-            <input type="radio" name="due-date">Friday
-            <br />
-            <input type="radio" name="due-date">Saturday
-            <br />
-            <input type="radio" name="due-date">Next Sunday
-            <br />
-            <br />
+            <div id="card-name-group">
+                <label for="card-name" class="item-title">Assignment name:</label>
+                <br />
+                <input id="card-name" type="text" />
+                <br />
+                <br />
+            </div>
+
+            <div id="description-group">
+            </div>
+
+            <div id="due-date-group">
+                <label class="item-title">Due date:</label>
+                <br />
+                <em>The card due date will be this day at the time defined in Settings.</em>
+                <br />
+                <input type="radio" id="due-date-today" name="due-date">
+                <label for="due-date-today">Today</label>
+                <br />
+                <input type="radio" id="due-date-tomorrow" name="due-date">
+                <label for="due-date-tomorrow">Tomorrow</label>
+                <br />
+                <input type="radio" name="due-date">Tuesday
+                <br />
+                <input type="radio" name="due-date">Wednesday
+                <br />
+                <input type="radio" name="due-date">Thursday
+                <br />
+                <input type="radio" name="due-date">Friday
+                <br />
+                <input type="radio" name="due-date">Saturday
+                <br />
+                <input type="radio" name="due-date">Next Sunday
+                <br />
+                <br />
+            </div>
             <button onclick="alert('This would ordinarily create a card')">Create card</button>
             <!-- generated on-the-fly via javascipt -->
         </form>
