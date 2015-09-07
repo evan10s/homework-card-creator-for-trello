@@ -1,3 +1,9 @@
+<!--
+* Homework Card Creator for Trello 
+* Build date 7-Sep-2015 5:06pm 
+* Evan Strat
+-->
+
 <!DOCTYPE html>
 <html>
 
@@ -16,6 +22,10 @@
         
         input[type="text"] {
             width: 95vw;
+        }
+        
+        input[type="radio"] {
+            margin-bottom: 7px;
         }
         
         .hidden {
@@ -48,26 +58,15 @@
                 <label class="item-title">Due date:</label>
                 <br />
                 <em>The card due date will be this day at the time defined in Settings.</em>
-                <br />
-                <input type="radio" id="due-date-today" name="due-date">
-                <label for="due-date-today">Today</label>
-                <br />
-                <input type="radio" id="due-date-tomorrow" name="due-date">
-                <label for="due-date-tomorrow">Tomorrow</label>
-                <br />
-                <input type="radio" name="due-date">Tuesday
-                <br />
-                <input type="radio" name="due-date">Wednesday
-                <br />
-                <input type="radio" name="due-date">Thursday
-                <br />
-                <input type="radio" name="due-date">Friday
-                <br />
-                <input type="radio" name="due-date">Saturday
-                <br />
-                <input type="radio" name="due-date">Next Sunday
-                <br />
-                <br />
+
+                <div id="due-date-days">
+                    <input type="radio" id="due-date-plus0" name="due-date">
+                    <label for="due-date-plus0">Today</label>
+                    <br />
+                    <input type="radio" id="due-date-plus1" name="due-date">
+                    <label for="due-date-plus1">Tomorrow</label>
+                    <br />
+                </div>
             </div>
             <button onclick="alert('This would ordinarily create a card')">Create card</button>
             <!-- generated on-the-fly via javascipt -->
@@ -105,9 +104,50 @@
             if (settings.descriptionType === "custom") {
                 document.getElementById('description-group').insertAdjacentHTML('afterbegin', '<label for="description" class="item-title">Description:</label><br /><input id="description" type="text" /><br /><br />');
             }
+
+            //configure due date picker
+            var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            var today = new Date();
+            var todayDayName = today.getDay();
+            var relativeDays = []; //the days array translated so that today is the first element
+            for (var i = todayDayName; i <= todayDayName + 6; i++) { //todayDayName + 6 can end the loop because Saturday (todayDayName = 6) is when the value of i will be the highest.  The loop continues to 6 more days (Sunday, Monday, Tuesday, Wednesday, Thursday, Friday) before it needs to end.  Thus, if Saturday = 6, and we add 6, we get 6+6 = 12; the last day is Friday (5), and 12-7 = 5; when we reach Friday i will be 12, and the loop will end.
+                if (i > 6) { //if i is greater than 6, subtract 7 (say, if today is Friday, and i starts at 5, then Sunday will be i = 7, so 7-7 = 0, which is correct)
+                    relativeDays.push(days[i - 7])
+                } else {
+                    relativeDays.push(days[i]);
+                }
+            }
+
+            var toAdd = "";
+            var dayNames = relativeDays;
+            dayNames[0] = "Next " + dayNames[0];
+            if (settings.debugMode) {
+                console.log(dayNames);
+            }
+            var dayToAdd;
+
+            for (i = 2; i <= relativeDays.length; i++) { //start at the day after tomorrow
+                if (i > 6) {
+                    j = i - 7;
+                    dayToAdd = dayNames[j];
+                } else {
+                    dayToAdd = dayNames[i];
+                }
+                toAdd += '<input type="radio" id="due-date-plus' + i + '" name="due-date"> <label for="due-date-plus' + i + '">' + dayToAdd + '</label><br />'; //this can apply to any value of i because only the day of the week is part of the array and needs to be corrected when i >= 7.  the id's for the radio buttons use plus_, and the Next [today] value is 7 days from now, so it should have 7 subtracted from it
+
+            }
+
+            document.getElementById('due-date-days').insertAdjacentHTML('beforeend', toAdd);
+
+
+            if (settings.debugMode) {
+                console.warn("Debug mode is enabled.  Disable before committing to GitHub");
+                console.log(relativeDays);
+            }
+
             document.getElementById('loading').className = "hidden";
             document.getElementById('app').className = "";
-        }
+        };
 
     </script>
 </body>
