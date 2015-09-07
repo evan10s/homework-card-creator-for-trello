@@ -3,67 +3,81 @@
 
 <head>
     <title>Homework Trello Card Creator</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <style>
         body {
             font-family: "Helvetica Neue", sans-serif, serif;
             width: auto;
         }
         
-        label {
+        label.item-title {
             font-weight: bold;
+        }
+        
+        input[type="text"] {
+            width: 95vw;
+        }
+        
+        .hidden {
+            display: none;
         }
 
     </style>
 </head>
 
-<body>
-    <strong>Quickly create a Trello card</strong>
-    <br />and use these attributes:
-    <br />
-    <br />
-    <form>
-        <label for="card-name">Assignment name:</label>
-        <br />
-        <input id="card-name" type="text" />
+<body onload="initialize()">
+    <em id="loading">Generating form...</em>
+    <div id="app" class="hidden">
+        <strong>Quickly create a Trello card</strong>
+        <br />and use these attributes:
         <br />
         <br />
-        <label>Description:</label>
-        <br />
-        <em>Auto-generated</em>
-        <br />
-        <br />
-        <label>Due date:</label>
-        <br />
-        <em>The card due date will be this day at the time defined in Settings.</em>
-        <br />
-        <input type="radio" name="due-date">Today
-        <br />
-        <input type="radio" name="due-date">Tomorrow
-        <br />
-        <input type="radio" name="due-date">Tuesday
-        <br />
-        <input type="radio" name="due-date">Wednesday
-        <br />
-        <input type="radio" name="due-date">Thursday
-        <br />
-        <input type="radio" name="due-date">Friday
-        <br />
-        <input type="radio" name="due-date">Saturday
-        <br />
-        <input type="radio" name="due-date">Next Sunday
-        <br />
-        <br />
-        <button onclick="alert('This would ordinarily create a card')">Create card</button>
-        <!-- generated on-the-fly via javascipt -->
-    </form>
+        <form>
+            <label for="card-name" class="item-title">Assignment name:</label>
+            <br />
+            <input id="card-name" type="text" />
+            <br />
+            <br />
+            <label class="item-title">Description:</label>
+            <br />
+            <em>Auto-generated</em>
+            <br />
+            <br />
+            <label class="item-title">Due date:</label>
+            <br />
+            <em>The card due date will be this day at the time defined in Settings.</em>
+            <br />
+            <input type="radio" id="due-date-today" name="due-date">
+            <label for="due-date-today">Today</label>
+            <br />
+            <input type="radio" id="due-date-tomorrow" name="due-date">
+            <label for="due-date-tomorrow">Tomorrow</label>
+            <br />
+            <input type="radio" name="due-date">Tuesday
+            <br />
+            <input type="radio" name="due-date">Wednesday
+            <br />
+            <input type="radio" name="due-date">Thursday
+            <br />
+            <input type="radio" name="due-date">Friday
+            <br />
+            <input type="radio" name="due-date">Saturday
+            <br />
+            <input type="radio" name="due-date">Next Sunday
+            <br />
+            <br />
+            <button onclick="alert('This would ordinarily create a card')">Create card</button>
+            <!-- generated on-the-fly via javascipt -->
+        </form>
+    </div>
     <script type="text/javascript">
         var settings = {
             //variable names that look LIKE_THIS are constants and generally only need to be set once
-            firstRun: true; //this will display some instructions to get started on the page; set this to false to hide them
+            firstRun: true, //this will display some instructions to get started on the page; set this to false to hide them
             //these settings control how this app communicates with Trello, via the Trello API
             TRELLO_DEVELOPER_KEY: "ENTER_TRELLO_DEVELOPER_KEY_HERE", //find yours at https://trello.com/1/appKey/generate
             TRELLO_TOKEN: "ENTER_GENERATED_TRELLO_TOKEN_HERE",
-            TRELLO_APP_NAME: "Trello Homework Card Creator" //You can set this to whatever you want, ideally something you'll recognize in the future
+            TRELLO_APP_NAME: "Trello Homework Card Creator", //You can set this to whatever you want, ideally something you'll recognize in the future
             TRELLO_READWRITE_AUTH_LENGTH: "ENTER_VALUE_HERE", //This determines how long you'll give yourself (via this app) read/write access to your Trello account.  If you are just trying this out, you can do "1day"; if you want this to work for the next month, enter "30days"; if you want this to work forever, enter "never"
             TRELLO_BOARD_ID: "ENTER_TRELLO_BOARD_ID_HERE", //the 8-character string after 'b/' in the URL of the Trello board you want these cards to appear on
 
@@ -75,14 +89,20 @@
             assignMyself: false, //allowed values: true - use TRELLO_USER_ID to assign yourself to the card you create; useful for showing cards in the Trello Android widget
             TRELLO_USER_ID: "ENTER_USERID_HERE", //if assign myself is here, enter your Trello user id here.  You can find it by looking at one of your cards JSON outputs
             dueDateTime: "0900", //the time when cards will be due, on the date you specify.  Use 24 hour time.  9AM = 0900, 9PM=2100
-            descriptionType: "attribution" //allowed values (You can program your own, too.): "attribution" - will put an italicized note saying the card was created using Trello Homework Card Creator, with a link back to the GitHub repository.  You can change this if you don't like it.  "datetime" - will add an italicized date and time that the card was created.  "none" - will show nothing and won't prompt for a description in the form  "custom" - will show a small textarea in the form where you can enter your own description, if you are so inclined
-            autoAddLabels = false; //allowed values: "true" - add the labels in LabelsToAdd to the card that is created; "false" (default) - don't auto-add labels
+            descriptionType: "attribution", //allowed values (You can program your own, too.): "attribution" - will put an italicized note saying the card was created using Trello Homework Card Creator, with a link back to the GitHub repository.  You can change this if you don't like it.  "datetime" - will add an italicized date and time that the card was created.  "none" - will show nothing and won't prompt for a description in the form  "custom" - will show a small textarea in the form where you can enter your own description, if you are so inclined
+            autoAddLabels: false, //allowed values: "true" - add the labels in LabelsToAdd to the card that is created; "false" (default) - don't auto-add labels
             labelsToAdd: ["ENTER_LABELS", "LABEL2"], //enter label names in this array to have them added to your card, if you wish.  Leave blank to add no labels
 
             //developer
-            logErrors = false; //log errors in the console
-            demoMode = false; //don't actual make requests but pretend that they went through successfully
+            logErrors: false, //log errors in the console
+            demoMode: false, //don't actual make requests but pretend that they went through successfully
         };
+
+        function initialize() {
+            console.log("Weeeeee! Initialization!");
+            document.getElementById('loading').className = "hidden";
+            document.getElementById('app').className = "";
+        }
 
     </script>
 </body>
