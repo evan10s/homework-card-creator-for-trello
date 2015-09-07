@@ -102,7 +102,9 @@
         };
 
         function initialize() {
-            console.log("Weeeeee! Initialization!");
+            if (settings.descriptionType === "custom") {
+                document.getElementById('description-group').insertAdjacentHTML('afterbegin', '<label for="description" class="item-title">Description:</label><br /><input id="description" type="text" /><br /><br />');
+            }
             document.getElementById('loading').className = "hidden";
             document.getElementById('app').className = "";
         }
