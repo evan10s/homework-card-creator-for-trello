@@ -93,7 +93,7 @@
             dueDateTime: "0900", //the time when cards will be due, on the date you specify.  Use 24 hour time.  9AM = 0900, 9PM=2100
             descriptionType: "attribution", //allowed values (You can program your own, too.): "attribution" - will put an italicized note saying the card was created using Trello Homework Card Creator, with a link back to the GitHub repository.  You can change this if you don't like it.  "datetime" - will add an italicized date and time that the card was created.  "none" - will show nothing and won't prompt for a description in the form  "custom" - will show a small textarea in the form where you can enter your own description, if you are so inclined
             autoAddLabels: false, //allowed values: "true" - add the labels in LabelsToAdd to the card that is created; "false" (default) - don't auto-add labels
-            labelsToAdd: ["ENTER_LABELS", "LABEL2"], //enter label names in this array to have them added to your card, if you wish.  Leave blank to add no labels
+            labelsToAdd: [], //enter label names in this array to have them added to your card, if you wish.  Leave blank to add no labels.  Enclose label names in quotes ,(e.g., label named Important would be entered as "Important").
 
             //developer - don't change these values unless you know what you're doing
             debugMode: false, //log various things that are useful for debugging in the console
