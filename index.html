@@ -147,7 +147,64 @@
 
             document.getElementById('loading').className = "hidden";
             document.getElementById('app').className = "";
-        };
+        }
+
+        function createCard() {
+            if (!checkSettings()) {
+                console.error("Card creation cannot continue because the settings check failed.");
+                return false;
+            }
+            //This code doesn't work yet
+            /*var trelloRequest = new XMLHttpRequest();
+            var url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=TestCard&desc=TestDesc&pos=bottom&due=9-7-2015&token=" + settings.TRELLO_TOKEN + "&idList=" + settings.TRELLO_LIST_ID[0] +  "&idMembers=";
+            trelloRequest.addEventListener("load", success, false); //keep track of status
+            trelloRequest.addEventListener("error", error, false);
+            trelloRequest.open("post", url);/* 
+
+        }
+
+        function checkSettings() {
+            var problems = [];
+            if (settings.TRELLO_DEVELOPER_KEY === "ENTER_TRELLO_DEVELOPER_KEY_HERE") {
+                problems.push("The Trello developer key is set to the default value.  Change it to your developer key.  You can find it at https://trello.com/1/appKey/generate.");
+            }
+            if (settings.TRELLO_TOKEN === "ENTER_GENERATED_TRELLO_TOKEN_HERE") {
+                problems.push("The Trello user token is set to the default value.  You'll need to set settings.firstRun to true to see how to solve this.");
+            }
+            if (settings.TRELLO_BOARD_ID === "ENTER_TRELLO_BOARD_ID_HERE") {
+                problems.push("The Trello board ID is set to the default value.  The board ID is the 8-character string after b/ in the URL of the Trello board you want to send cards to.");
+            }
+            if (settings.TRELLO_LISTS[0] === "ENTER_LIST_IDS" || TRELLO_LISTS[0] === "LIST_ID2" || TRELLO_LISTS[1] === "ENTER_LIST_IDS" || TRELLO_LISTS[1] === "LIST_ID2") {
+                problems.push("The Trello list ID array contains one or more default values.  Replace them with your list IDs.  Set settings.firstRun to true and follow the instructions to resolve this issue.");
+            }
+            if (settings.assignMyself && settings.TRELLO_USER_ID === "ENTER_USERID_HERE") {
+                problems.push("The Trello user ID is not set but assignMyself is set to true.  To resolve, either set settings.assignMyself to false or set settings.firstRun to true and follow the instructions.");
+            }
+            if (problems) {
+                plural = "s";
+                if (problems.length === 1) {
+                    plural = "";
+                }
+                console.error("Settings check failed.");
+                for (i = 0; i < problems.length; i++) {
+                    console.error(problems[i]);
+                }
+                alert(problems.length + " error" + plural + " occurred.  See the console for more information.  You must solve the errors to create cards.");
+            }
+        }
+
+        function success(evt) {
+            alert("It worked!");
+        }
+
+        function error(evt) {
+            alert("Something went wrong.  See console.");
+            if (settings.debugMode) {
+                console.error("The request failed.");
+                console.error(evt);
+            }
+
+        }
 
     </script>
 </body>
