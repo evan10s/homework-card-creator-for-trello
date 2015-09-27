@@ -1,6 +1,7 @@
 <!--
 * Homework Card Creator for Trello 
-* Build date 7-Sep-2015 9:40pm 
+* Build date 27-Sep-2015 1:42pm
+* Version v1.0
 * Evan Strat
 -->
 
@@ -20,16 +21,22 @@
             font-weight: bold;
         }
         
-        input[type="text"] {
-            width: 95vw;
-        }
-        
         input[type="radio"] {
             margin-bottom: 7px;
         }
         
         .hidden {
             display: none;
+        }
+        
+        @media (max-width: 767px) {
+            input[type="text"] {
+                width: 95vw;
+            }
+            button {
+                margin-top: 10px;
+                width: 95vw;
+            }
         }
 
     </style>
@@ -60,19 +67,19 @@
                 <em>The card due date will be this day at the time defined in Settings.</em>
 
                 <div id="due-date-days">
-                    <input type="radio" id="due-date-plus0" name="due-date">
+                    <input type="radio" id="due-date-plus0" value="0" name="due-date">
                     <label for="due-date-plus0">Today</label>
                     <br />
-                    <input type="radio" id="due-date-plus1" name="due-date">
+                    <input type="radio" id="due-date-plus1" value="1" name="due-date">
                     <label for="due-date-plus1">Tomorrow</label>
                     <br />
                 </div>
             </div>
-            <button onclick="alert('This would ordinarily create a card')">Create card</button>
-            <!-- generated on-the-fly via javascipt -->
+            <button onclick="createCard(); return false;">Create card</button>
+            <!-- return false for the button prevemts page reload on submit.  The form is largely generated on-the-fly via Javascipt. -->
         </form>
     </div>
-    <!-- moment.js is included within this file to prevent issues with referencing other files when viewing HTML files locally on a device.  See README.md for this project for a link to the moment.js license.-->
+    <!-- moment.js is included within this file to prevent issues with referencing other files when viewing HTML files locally on a device.  See README.md for this project to see the moment.js license.-->
     <script>
         //! moment.js
         //! version : 2.10.6
@@ -3304,7 +3311,7 @@
     <script type="text/javascript">
         var settings = {
             //variable names that look LIKE_THIS are constants and generally only need to be set once
-            firstRun: true, //this will display some instructions to get started on the page; set this to false to hide them
+            firstRun: true, //this will display some instructions to get started on the page; set this to false to hide them.  TODO: make this actually do something
             //these settings control how this app communicates with Trello, via the Trello API
             TRELLO_DEVELOPER_KEY: "ENTER_TRELLO_DEVELOPER_KEY_HERE", //find yours at https://trello.com/1/appKey/generate
             TRELLO_TOKEN: "ENTER_GENERATED_TRELLO_TOKEN_HERE",
@@ -3313,19 +3320,19 @@
             TRELLO_BOARD_ID: "ENTER_TRELLO_BOARD_ID_HERE", //the 8-character string after 'b/' in the URL of the Trello board you want these cards to appear on
 
             //these settings control which list(s) your cards are added to on the board you specified
-            TRELLO_LISTS: ["ENTER_LIST_IDS", "LIST_ID2"], //an array of lists you want to add cards to.  A dropdown menu to select the list you want will appear at the top if more than one is here.  An error message will appear if no list is specified here
+            TRELLO_LISTS: ["ENTER_LIST_IDS", "LIST_ID2"], //an array of lists you want to add cards to.  A dropdown menu to select the list you want will appear at the top if more than one is here.  An error message will appear if no list is specified here.  Do not remove the brackets around the list ID, even if you only specify one list.
             listAddType: "one", //allowed values: "one" - only add the card to the selected list, "all" - add the card to all lists specified in TRELLO_LISTS
 
             //these settings control how the card is generated; all can be dynamic; the intent is to save you time from having to do repetitive things, like adding due dates (the whole reason this was created), or assigning users, adding labels, adding a description, etc.
             assignMyself: false, //allowed values: true - use TRELLO_USER_ID to assign yourself to the card you create; useful for showing cards in the Trello Android widget
-            TRELLO_USER_ID: "ENTER_USERID_HERE", //if assign myself is here, enter your Trello user id here.  You can find it by looking at one of your cards JSON outputs
-            dueDateTime: "0900", //the time when cards will be due, on the date you specify.  Use 24 hour time.  9AM = 0900, 9PM=2100
+            TRELLO_USER_ID: "ENTER_USERID_HERE", //if assign myself is true, enter your Trello user id here.  You can find it by looking at one of your cards JSON outputs
+            dueDateTime: "0900", //the time when cards will be due, on the date you specify.  Use 24 hour time; 9AM = 0900, 9PM=2100
             descriptionType: "attribution", //allowed values (You can program your own, too.): "attribution" - will put an italicized note saying the card was created using Trello Homework Card Creator, with a link back to the GitHub repository.  You can change this if you don't like it.  "datetime" - will add an italicized date and time that the card was created.  "none" - will show nothing and won't prompt for a description in the form  "custom" - will show a small textarea in the form where you can enter your own description, if you are so inclined
             autoAddLabels: false, //allowed values: "true" - add the labels in LabelsToAdd to the card that is created; "false" (default) - don't auto-add labels
             labelsToAdd: [], //enter label names in this array to have them added to your card, if you wish.  Leave blank to add no labels.  Enclose label names in quotes ,(e.g., label named Important would be entered as "Important").
 
             //developer - don't change these values unless you know what you're doing
-            debugMode: true, //log various things that are useful for debugging in the console
+            debugMode: false, //log various things that are useful for debugging in the console
             demoMode: false, //simulate various end results of requests.  accepted values: "success" - pretend that the request succeeded; "ANY_ERROR_CODE" - enter an error code used by this app, and the app will pretend the request failed with that error code
             today: "" //DO NOT CHANGE, but either way, this gets overwritten on load with the current date and time.
         };
@@ -3382,34 +3389,46 @@
         }
 
         function createCard() {
-            /*if (!checkSettings()) {
+            if (!checkSettings()) {
                 console.error("Card creation cannot continue because the settings check failed.");
                 return false;
-            }*/
+            }
 
-            //This doesn't work yet.
-            var tomorrow = settings.today.add(1, 'd'); //Find tomorrow by adding one day to the date recorded when the page was loaded (should generally be pretty close to when the card is created [in theory])
+            var dueDateSelected = document.querySelector('input[name="due-date"]:checked').value; //We can assume this has a value because that was verified in the checkSettings() function that ran before this.  If no due date was selected, checkSettings should catch it and prevent card creation from continuing.
+            var dueDate = settings.today.add(dueDateSelected, 'd'); //Find dueDate by adding number of days necessary to the date recorded when the page was loaded (should generally be pretty close to when the card is created [in theory]).  Today adds 0, tomorrow adds 1, etc.  The values of the due date question radio buttons are the number of days to get to them (it takes 0 days to get to today, 1 to get to tomorrow, etc.)
             //TODO: if it's now the next day, confirm the actual date the user wants for the due date
             var dueHour = settings.dueDateTime.substring(0, 2); //get the hour for the due date from settings
             var dueMin = settings.dueDateTime.substring(2, 4); //get the minute for the due date from settings
             if (settings.debugMode) {
-                console.log(tomorrow);
-                console.log(dueHour);
-                console.log(dueMin);
+                console.log("dueDate: " + dueDate);
+                console.log("dueHour: " + dueHour);
+                console.log("dueMin: " + dueMin);
             }
-            tomorrow.hour(dueHour);
-            tomorrow.minute(dueMin);
-            var trelloRequest = new XMLHttpRequest();
-            /*var url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=TestCard&desc=TestDesc&pos=bottom&due=9-7-2015&token=" + settings.TRELLO_TOKEN + "&idList=" + settings.TRELLO_LIST_ID[0] + "&idMembers=";*/
+            //finish setting up the due date
+            dueDate.hour(dueHour);
+            dueDate.minutes(dueMin);
+            dueDate.seconds(0); //set seconds and milliseconds to 0 so that the due date is for exactly the hour and minute specified
+            dueDate.milliseconds(0);
 
+            var assignmentName = document.querySelector('input[id="card-name"]').value; //get the assignment name
+
+            //actually send the card to Trello
+            var trelloRequest = new XMLHttpRequest();
+            var url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=" + assignmentName + "&desc=TestDesc2&pos=bottom&due=" + dueDate + "&token=" + settings.TRELLO_TOKEN + "&idList=" + settings.TRELLO_LISTS[0] + "&idMembers=" + settings.TRELLO_USER_ID;
+            //TO DO: add ability to select desired list in advance
+            if (settings.debugMode) {
+                console.log(url);
+            }
             trelloRequest.addEventListener("load", success, false); //keep track of status
             trelloRequest.addEventListener("error", error, false);
-            trelloRequest.open("post", url);
-
+            //TODO: Add better error handling.  Currently, requests that return "401 (Unauthorized)" are marked successful
+            trelloRequest.open("POST", url);
+            trelloRequest.send();
         }
 
         function checkSettings() {
             var problems = [];
+            //check for default values
             if (settings.TRELLO_DEVELOPER_KEY === "ENTER_TRELLO_DEVELOPER_KEY_HERE") {
                 problems.push("The Trello developer key is set to the default value.  Change it to your developer key.  You can find it at https://trello.com/1/appKey/generate.");
             }
@@ -3419,13 +3438,23 @@
             if (settings.TRELLO_BOARD_ID === "ENTER_TRELLO_BOARD_ID_HERE") {
                 problems.push("The Trello board ID is set to the default value.  The board ID is the 8-character string after b/ in the URL of the Trello board you want to send cards to.");
             }
-            if (settings.TRELLO_LISTS[0] === "ENTER_LIST_IDS" || TRELLO_LISTS[0] === "LIST_ID2" || TRELLO_LISTS[1] === "ENTER_LIST_IDS" || TRELLO_LISTS[1] === "LIST_ID2") {
+            if (settings.TRELLO_LISTS[0] === "ENTER_LIST_IDS" || settings.TRELLO_LISTS[0] === "LIST_ID2" || settings.TRELLO_LISTS[1] === "ENTER_LIST_IDS" || settings.TRELLO_LISTS[1] === "LIST_ID2") {
                 problems.push("The Trello list ID array contains one or more default values.  Replace them with your list IDs.  Set settings.firstRun to true and follow the instructions to resolve this issue.");
             }
             if (settings.assignMyself && settings.TRELLO_USER_ID === "ENTER_USERID_HERE") {
                 problems.push("The Trello user ID is not set but assignMyself is set to true.  To resolve, either set settings.assignMyself to false or set settings.firstRun to true and follow the instructions.");
             }
-            if (problems) {
+            try { //make sure due date selected
+                document.querySelector('input[name="due-date"]:checked').value; //see if a due date was selected
+            } catch (e) {
+                problems.push("No due date was selected.  You must select a due date to create the card.  If you know what you are doing, you can also change the value of the due date that is sent in the request to Trello to null and comment out this try-catch statement.");
+            }
+
+            //make sure an assignment name was specified
+            if (document.querySelector('input[id="card-name"]').value === "") {
+                problems.push("You didn't specify an assignment name.");
+            }
+            if (problems.length > 0) { //failed
                 plural = "s";
                 if (problems.length === 1) {
                     plural = "";
@@ -3435,15 +3464,18 @@
                     console.error(problems[i]);
                 }
                 alert(problems.length + " error" + plural + " occurred.  See the console for more information.  You must solve the errors to create cards.");
+            } else {
+                return true; //passed
             }
         }
 
+        //trelloRequest callbacks
         function success(evt) {
-            alert("It worked!");
+            alert("Success!  Card created.");
         }
 
         function error(evt) {
-            alert("Something went wrong.  See console.");
+            alert("Eek!  Something went wrong: " + evt);
             if (settings.debugMode) {
                 console.error("The request failed.");
                 console.error(evt);
