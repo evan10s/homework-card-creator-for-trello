@@ -14,9 +14,10 @@ Android devices
 2. Luckily, there's a workaround.  If you download the [Open in Browser](https://play.google.com/store/apps/details?id=ru.gelin.android.browser.open) app on the Play Store, you can make a shortcut through that app and you'll be able to open the index.html file.
 3. After you have downloaded Open in Browser, open the app and pick the browser you want to open index.html with.  (Note: there's no Save button.  You can just close the app to save your preference.)
 4. Now, get the index.html file onto your device.  Here's the easiest way:
-a. Download the ZIP file of the latest Homework Card Creator for Trello releae.  Unzip it on your computer.
-b. Transfer the file to your device.  You can email it, add it a cloud storage service, etc.
-c. Save the file to your device.  The option might be called "Download" or "Export."
+4.1. Download the ZIP file of the latest Homework Card Creator for Trello releae.  Unzip it on your computer.
+4.2. Change the settings in index.html (they start on line 3312, after moment.js).  You'll need to specify values for any variables with all CAPS names.  (This will be simpler in the future.)
+4.3. Transfer the file to your device.  You can email it, add it a cloud storage service, etc.
+4.4. Save the file to your device.  The option might be called "Download" or "Export."
 5. Open the File Manager app on your device.  Go to the Download (or Downloads) folder (or wherever you saved it) and select the index.htm file you downloaded to your device.  Find the Share option and tap on it.
 6. Tap on Desktop Shortcut, and enter a name you like.
 7. Go to your home screen and find the shortcut that was created.
