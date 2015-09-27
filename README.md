@@ -10,7 +10,18 @@ Setup Instructions
 
 Android devices
 ---------------
-*Coming soon*
+1. For quick access, you'll want to save index.html file to your device.  Though slightly counterintuitive, you can't just download the index.html file to your device, open it in Google Chrome, and then save it to your homescreen.  As soon as you close the Chrome app (swipe it away in the Recent Apps display), if you try to open index.html using your shortcut, you'll get a message saying Chrome has stopped responding.
+2. Luckily, there's a workaround.  If you download the [Open in Browser](https://play.google.com/store/apps/details?id=ru.gelin.android.browser.open) app on the Play Store, you can make a shortcut through that app and you'll be able to open the index.html file.
+3. After you have downloaded Open in Browser, open the app and pick the browser you want to open index.html with.  (Note: there's no Save button.  You can just close the app to save your preference.)
+4. Now, get the index.html file onto your device.  Here's the easiest way:
+a. Download the ZIP file of the latest Homework Card Creator for Trello releae.  Unzip it on your computer.
+b. Transfer the file to your device.  You can email it, add it a cloud storage service, etc.
+c. Save the file to your device.  The option might be called "Download" or "Export."
+5. Open the File Manager app on your device.  Go to the Download (or Downloads) folder (or wherever you saved it) and select the index.htm file you downloaded to your device.  Find the Share option and tap on it.
+6. Tap on Desktop Shortcut, and enter a name you like.
+7. Go to your home screen and find the shortcut that was created.
+8. Tap on the shortcut.  You'll get a prompt asking if you want to Open with Browser.  Tap Always or the equivalent "Do this by default" option if you're on an earlier version of Android.
+9. That's it!  If you've properly configured Homework Card Creator for Trello, it should work.
 
 iOS devices
 -----------
