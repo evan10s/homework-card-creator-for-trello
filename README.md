@@ -3,7 +3,7 @@ An HTML file on your phone that lets you quickly create Trello cards with automa
 
 Current Limitations
 ===================
- - See #4
+ - See [#4](https://github.com/evan10s/homework-card-creator-for-trello/issues/4)
 
 Setup Instructions
 ==================
