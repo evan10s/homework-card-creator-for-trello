@@ -3414,7 +3414,7 @@
 
             //actually send the card to Trello
             var trelloRequest = new XMLHttpRequest();
-            var url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=" + assignmentName + "&desc=TestDesc2&pos=bottom&due=" + dueDate + "&token=" + settings.TRELLO_TOKEN + "&idList=" + settings.TRELLO_LISTS[0] + "&idMembers=" + settings.TRELLO_USER_ID;
+            var url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=" + assignmentName + "&pos=bottom&due=" + dueDate + "&token=" + settings.TRELLO_TOKEN + "&idList=" + settings.TRELLO_LISTS[0] + "&idMembers=" + settings.TRELLO_USER_ID;
             //TO DO: add ability to select desired list in advance
             if (settings.debugMode) {
                 console.log(url);
