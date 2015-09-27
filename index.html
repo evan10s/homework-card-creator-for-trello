@@ -38,7 +38,6 @@
                 width: 95vw;
             }
         }
-
     </style>
 </head>
 
@@ -3305,7 +3304,6 @@
             return _moment;
 
         }));
-
     </script>
 
     <script type="text/javascript">
@@ -3367,10 +3365,8 @@
                 if (i > 6) {
                     j = i - 7;
                     dayToAdd = dayNames[j];
-                    dayValue = j; //set the day value to the appropriate adjusted day
                 } else {
                     dayToAdd = dayNames[i];
-                    dayValue = i; //set the day value to the appropriate  day
                 }
                 toAdd += '<input type="radio" id="due-date-plus' + i + '" value="' + dayValue + '" name="due-date"> <label for="due-date-plus' + i + '">' + dayToAdd + '</label><br />'; //this can apply to any value of i because only the day of the week is part of the array and needs to be corrected when i >= 7.  the id's for the radio buttons use plus_, and the Next [today] value is 7 days from now, so it should have 7 subtracted from it
 
@@ -3482,7 +3478,6 @@
             }
 
         }
-
     </script>
 
 </body>
