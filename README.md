@@ -1,6 +1,8 @@
 # Homework Card Creator for Trello
 An HTML file on your phone that lets you quickly create Trello cards with automatically generated attributes, like due dates or labels, to help you save time.
 
+Note: you don't need the script.js file for Homework Card Creator for Trello to work properly.  It's just here so that the Javascript can be analyzed by [Codacy](codacy.com).
+
 Current Limitations
 ===================
  - See [#4](https://github.com/evan10s/homework-card-creator-for-trello/issues/4)
