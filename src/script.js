@@ -86,6 +86,65 @@ function initialize() {
     document.getElementById('app').className = "";
 }
 
+//trelloRequest callbacks
+function success(evt) {
+    alert("Success!  Card created.");
+
+    document.getElementById('card-info').reset(); //clear the form
+}
+
+function error(evt) {
+    alert("Eek!  There was a problem that prevented your card from being creator.  Check your internet connection and make sure there are no accents or other special characters in the card name, then try again.");
+    if (settings.debugMode) {
+        console.error("The request failed.");
+        console.error(evt);
+    }
+}
+
+function checkSettings() {
+    var problems = [];
+    //check for default values
+    if (settings.TRELLO_DEVELOPER_KEY === "ENTER_TRELLO_DEVELOPER_KEY_HERE") {
+        problems.push("The Trello developer key is set to the default value.  Change it to your developer key.  You can find it at https://trello.com/1/appKey/generate.");
+    }
+    if (settings.TRELLO_TOKEN === "ENTER_GENERATED_TRELLO_TOKEN_HERE") {
+        problems.push("The Trello user token is set to the default value.  You'll need to set settings.firstRun to true to see how to solve this.");
+    }
+    if (settings.TRELLO_BOARD_ID === "ENTER_TRELLO_BOARD_ID_HERE") {
+        problems.push("The Trello board ID is set to the default value.  The board ID is the 8-character string after b/ in the URL of the Trello board you want to send cards to.");
+    }
+    if (settings.TRELLO_LISTS[0] === "ENTER_LIST_IDS" || settings.TRELLO_LISTS[0] === "LIST_ID2" || settings.TRELLO_LISTS[1] === "ENTER_LIST_IDS" || settings.TRELLO_LISTS[1] === "LIST_ID2") {
+        problems.push("The Trello list ID array contains one or more default values.  Replace them with your list IDs.  Set settings.firstRun to true and follow the instructions to resolve this issue.");
+    }
+    if (settings.assignMyself && settings.TRELLO_USER_ID === "ENTER_USERID_HERE") {
+        problems.push("The Trello user ID is not set but assignMyself is set to true.  To resolve, either set settings.assignMyself to false or set settings.firstRun to true and follow the instructions.");
+    }
+    try { //make sure due date selected
+        document.querySelector('input[name="due-date"]:checked').value; //see if a due date was selected
+    } catch (e) {
+        problems.push("No due date was selected.  You must select a due date to create the card.  If you know what you are doing, you can also change the value of the due date that is sent in the request to Trello to null and comment out this try-catch statement.");
+    }
+
+
+    //make sure an assignment name was specified
+    if (document.querySelector('input[id="card-name"]').value === "") {
+        problems.push("You didn't specify an assignment name.");
+    }
+    if (problems.length > 0) { //failed
+        plural = "s";
+        if (problems.length === 1) {
+            plural = "";
+        }
+        console.error("Settings check failed.");
+        for (i = 0; i < problems.length; i++) {
+            console.error(problems[i]);
+        }
+        alert(problems.length + " error" + plural + " occurred.  See the console for more information.  You must resolve the errors to create cards.");
+    } else {
+        return true; //passed
+    }
+}
+
 function createCard() {
     if (!checkSettings()) {
         console.error("Card creation cannot continue because the settings check failed.");
@@ -132,61 +191,3 @@ function createCard() {
     trelloRequest.send();
 }
 
-function checkSettings() {
-    var problems = [];
-    //check for default values
-    if (settings.TRELLO_DEVELOPER_KEY === "ENTER_TRELLO_DEVELOPER_KEY_HERE") {
-        problems.push("The Trello developer key is set to the default value.  Change it to your developer key.  You can find it at https://trello.com/1/appKey/generate.");
-    }
-    if (settings.TRELLO_TOKEN === "ENTER_GENERATED_TRELLO_TOKEN_HERE") {
-        problems.push("The Trello user token is set to the default value.  You'll need to set settings.firstRun to true to see how to solve this.");
-    }
-    if (settings.TRELLO_BOARD_ID === "ENTER_TRELLO_BOARD_ID_HERE") {
-        problems.push("The Trello board ID is set to the default value.  The board ID is the 8-character string after b/ in the URL of the Trello board you want to send cards to.");
-    }
-    if (settings.TRELLO_LISTS[0] === "ENTER_LIST_IDS" || settings.TRELLO_LISTS[0] === "LIST_ID2" || settings.TRELLO_LISTS[1] === "ENTER_LIST_IDS" || settings.TRELLO_LISTS[1] === "LIST_ID2") {
-        problems.push("The Trello list ID array contains one or more default values.  Replace them with your list IDs.  Set settings.firstRun to true and follow the instructions to resolve this issue.");
-    }
-    if (settings.assignMyself && settings.TRELLO_USER_ID === "ENTER_USERID_HERE") {
-        problems.push("The Trello user ID is not set but assignMyself is set to true.  To resolve, either set settings.assignMyself to false or set settings.firstRun to true and follow the instructions.");
-    }
-    try { //make sure due date selected
-        document.querySelector('input[name="due-date"]:checked').value; //see if a due date was selected
-    } catch (e) {
-        problems.push("No due date was selected.  You must select a due date to create the card.  If you know what you are doing, you can also change the value of the due date that is sent in the request to Trello to null and comment out this try-catch statement.");
-    }
-    
-
-    //make sure an assignment name was specified
-    if (document.querySelector('input[id="card-name"]').value === "") {
-        problems.push("You didn't specify an assignment name.");
-    }
-    if (problems.length > 0) { //failed
-        plural = "s";
-        if (problems.length === 1) {
-            plural = "";
-        }
-        console.error("Settings check failed.");
-        for (i = 0; i < problems.length; i++) {
-            console.error(problems[i]);
-        }
-        alert(problems.length + " error" + plural + " occurred.  See the console for more information.  You must resolve the errors to create cards.");
-    } else {
-        return true; //passed
-    }
-}
-
-//trelloRequest callbacks
-function success(evt) {
-    alert("Success!  Card created.");
-
-    document.getElementById('card-info').reset(); //clear the form
-}
-
-function error(evt) {
-    alert("Eek!  There was a problem that prevented your card from being creator.  Check your internet connection and make sure there are no accents or other special characters in the card name, then try again.");
-    if (settings.debugMode) {
-        console.error("The request failed.");
-        console.error(evt);
-    }
-}
