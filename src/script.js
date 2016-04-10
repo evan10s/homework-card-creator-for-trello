@@ -50,7 +50,7 @@ function initialize() {
     let relativeDays = []; //the days array translated so that today is the first element
     for (let i = todayDayName; i <= todayDayName + 6; i++) { //todayDayName + 6 can end the loop because Saturday (todayDayName = 6) is when the value of i will be the highest.  The loop continues to 6 more days (Sunday, Monday, Tuesday, Wednesday, Thursday, Friday) before it needs to end.  Thus, if Saturday = 6, and we add 6, we get 6+6 = 12; the last day is Friday (5), and 12-7 = 5; when we reach Friday i will be 12, and the loop will end.
         if (i > 6) { //if i is greater than 6, subtract 7 (say, if today is Friday, and i starts at 5, then Sunday will be i = 7, so 7-7 = 0, which is correct)
-            relativeDays.push(days[i - 7])
+            relativeDays.push(days[i - 7]);
         } else {
             relativeDays.push(days[i]);
         }
