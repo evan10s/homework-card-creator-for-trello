@@ -9,7 +9,7 @@ var settings = {
     TRELLO_BOARD_ID: "ENTER_TRELLO_BOARD_ID_HERE", //the 8-character string after 'b/' in the URL of the Trello board you want these cards to appear on
 
     //these settings control which list(s) your cards are added to on the board you specified
-    TRELLO_LISTS: ["ENTER_LIST_IDS", "LIST_ID2"], //an array of lists you want to add cards to.  A dropdown menu to select the list you want will appear at the top if more than one is here.  An error message will appear if no list is specified here.  Do not remove the brackets around the list ID, even if you only specify one list.
+    TRELLO_LISTS: [{ LIST_NAME: "FRIENDLY_NAME", LIST_ID: "ENTER_LIST_ID_HERE" },{ LIST_NAME: "FRIENDLY_NAME_LIST2", LIST_ID: "ENTER_SECOND_LIST_ID_HERE" } ], //an array of lists you want to add cards to.  Put a nickname for the list in LIST_NAME and the list's ID in LIST_ID.  A dropdown menu to select the list you want will appear at the top if more than one is here.  An error message will appear if no list is specified here.  Do not remove the brackets around the list ID, even if you only specify one list.
     listAddType: "one", //allowed values: "one" - only add the card to the selected list, "all" - add the card to all lists specified in TRELLO_LISTS
 
     //these settings control how the card is generated; all can be dynamic; the intent is to save you time from having to do repetitive things, like adding due dates (the whole reason this was created), or assigning users, adding labels, adding a description, etc.
@@ -21,16 +21,26 @@ var settings = {
     labelsToAdd: [], //enter label names in this array to have them added to your card, if you wish.  Leave blank to add no labels.  Enclose label names in quotes ,(e.g., label named Important would be entered as "Important").
 
     //developer - don't change these values unless you know what you're doing
-    debugMode: true, //log various things that are useful for debugging in the console
+    debugMode: false, //log various things that are useful for debugging in the console
     demoMode: false, //simulate various end results of requests.  accepted values: "success" - pretend that the request succeeded; "ANY_ERROR_CODE" - enter an error code used by this app, and the app will pretend the request failed with that error code
     today: "" //DO NOT CHANGE, but either way, this gets overwritten on load with the current date and time.
 };
+
 
 function initialize() {
     if (settings.descriptionType === "custom") {
         document.getElementById('description-group').insertAdjacentHTML('afterbegin', '<label for="description" class="item-title">Description:</label><br /><input id="description" type="text" /><br /><br />');
     }
 
+    if (settings.TRELLO_LISTS.length > 0) {
+
+        let listsToAdd = "";
+        for (let i = 0; i < settings.TRELLO_LISTS.length; i++) {
+            listsToAdd += '<input type="radio" id="list' + i + '" value="' + settings.TRELLO_LISTS[i].LIST_ID + '" name="lists" /><label for="list' + i + '">' + settings.TRELLO_LISTS[i].LIST_NAME + '</label><br/>';
+        }
+
+        document.getElementById('list-options').insertAdjacentHTML('beforeend', listsToAdd);
+    }
     //configure due date picker
     let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     settings.today = moment();
@@ -81,6 +91,14 @@ function createCard() {
         return false;
     }
     settings.today = moment(); //make sure we're starting with the current date
+
+    let listSelected;
+    if (settings.TRELLO_LISTS.length > 0) {
+        listSelected = document.querySelector('input[name="lists"]:checked').value;
+    } else {
+        listSelected = settings.TRELLO_LISTS[0].LIST_ID;
+    }
+
     let dueDateSelected = document.querySelector('input[name="due-date"]:checked').value; //We can assume this has a value because that was verified in the checkSettings() function that ran before this.  If no due date was selected, checkSettings should catch it and prevent card creation from continuing.
     let dueDate = settings.today.add(dueDateSelected, 'd'); //Find dueDate by adding number of days necessary to the date recorded when the page was loaded (should generally be pretty close to when the card is created [in theory]).  Today adds 0, tomorrow adds 1, etc.  The values of the due date question radio buttons are the number of days to get to them (it takes 0 days to get to today, 1 to get to tomorrow, etc.)
     //TODO: if it's now the next day, confirm the actual date the user wants for the due date
@@ -97,11 +115,11 @@ function createCard() {
     dueDate.seconds(0); //set seconds and milliseconds to 0 so that the due date is for exactly the hour and minute specified
     dueDate.milliseconds(0);
 
-    var assignmentName = document.querySelector('input[id="card-name"]').value; //get the assignment name
+    let assignmentName = document.querySelector('input[id="card-name"]').value; //get the assignment name
 
     //actually send the card to Trello
-    var trelloRequest = new XMLHttpRequest();
-    var url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=" + assignmentName + "&pos=bottom&due=" + dueDate + "&token=" + settings.TRELLO_TOKEN + "&idList=" + settings.TRELLO_LISTS[0] + "&idMembers=" + settings.TRELLO_USER_ID;
+    let trelloRequest = new XMLHttpRequest();
+    let url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=" + assignmentName + "&pos=bottom&due=" + dueDate + "&token=" + settings.TRELLO_TOKEN + "&idList=" + listSelected + "&idMembers=" + settings.TRELLO_USER_ID;
     //TO DO: add ability to select desired list in advance
     if (settings.debugMode) {
         console.log(url);
