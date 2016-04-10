@@ -88,50 +88,19 @@ function initialize() {
     document.getElementById('app').className = "";
 }
 
-function createCard() {
-    if (!checkSettings()) {
-        console.error("Card creation cannot continue because the settings check failed.");
-        return false;
-    }
-    settings.today = moment(); //make sure we're starting with the current date
+//trelloRequest callbacks
+function success(evt) {
+    alert("Success!  Card created.");
 
-    var listSelected = void 0;
-    if (settings.TRELLO_LISTS.length > 1) {
-        listSelected = document.querySelector('input[name="lists"]:checked').value;
-    } else {
-        listSelected = settings.TRELLO_LISTS[0].LIST_ID;
-    }
+    document.getElementById('card-info').reset(); //clear the form
+}
 
-    var dueDateSelected = document.querySelector('input[name="due-date"]:checked').value; //We can assume this has a value because that was verified in the checkSettings() function that ran before this.  If no due date was selected, checkSettings should catch it and prevent card creation from continuing.
-    var dueDate = settings.today.add(dueDateSelected, 'd'); //Find dueDate by adding number of days necessary to the date recorded when the page was loaded (should generally be pretty close to when the card is created [in theory]).  Today adds 0, tomorrow adds 1, etc.  The values of the due date question radio buttons are the number of days to get to them (it takes 0 days to get to today, 1 to get to tomorrow, etc.)
-    //TODO: if it's now the next day, confirm the actual date the user wants for the due date
-    var dueHour = settings.dueDateTime.substring(0, 2); //get the hour for the due date from settings
-    var dueMin = settings.dueDateTime.substring(2, 4); //get the minute for the due date from settings
+function error(evt) {
+    alert("Eek!  There was a problem that prevented your card from being creator.  Check your internet connection and make sure there are no accents or other special characters in the card name, then try again.");
     if (settings.debugMode) {
-        console.log("dueDate: " + dueDate);
-        console.log("dueHour: " + dueHour);
-        console.log("dueMin: " + dueMin);
+        console.error("The request failed.");
+        console.error(evt);
     }
-    //finish setting up the due date
-    dueDate.hour(dueHour);
-    dueDate.minutes(dueMin);
-    dueDate.seconds(0); //set seconds and milliseconds to 0 so that the due date is for exactly the hour and minute specified
-    dueDate.milliseconds(0);
-
-    var assignmentName = document.querySelector('input[id="card-name"]').value; //get the assignment name
-
-    //actually send the card to Trello
-    var trelloRequest = new XMLHttpRequest();
-    var url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=" + assignmentName + "&pos=bottom&due=" + dueDate + "&token=" + settings.TRELLO_TOKEN + "&idList=" + listSelected + "&idMembers=" + settings.TRELLO_USER_ID;
-    //TO DO: add ability to select desired list in advance
-    if (settings.debugMode) {
-        console.log(url);
-    }
-    trelloRequest.addEventListener("load", success, false); //keep track of status
-    trelloRequest.addEventListener("error", error, false);
-    //TODO: Add better error handling.  Currently, requests that return "401 (Unauthorized)" are marked successful
-    trelloRequest.open("POST", url);
-    trelloRequest.send();
 }
 
 function checkSettings() {
@@ -179,19 +148,50 @@ function checkSettings() {
     }
 }
 
-//trelloRequest callbacks
-function success(evt) {
-    alert("Success!  Card created.");
-
-    document.getElementById('card-info').reset(); //clear the form
-}
-
-function error(evt) {
-    alert("Eek!  There was a problem that prevented your card from being creator.  Check your internet connection and make sure there are no accents or other special characters in the card name, then try again.");
-    if (settings.debugMode) {
-        console.error("The request failed.");
-        console.error(evt);
+function createCard() {
+    if (!checkSettings()) {
+        console.error("Card creation cannot continue because the settings check failed.");
+        return false;
     }
+    settings.today = moment(); //make sure we're starting with the current date
+
+    var listSelected = void 0;
+    if (settings.TRELLO_LISTS.length > 1) {
+        listSelected = document.querySelector('input[name="lists"]:checked').value;
+    } else {
+        listSelected = settings.TRELLO_LISTS[0].LIST_ID;
+    }
+
+    var dueDateSelected = document.querySelector('input[name="due-date"]:checked').value; //We can assume this has a value because that was verified in the checkSettings() function that ran before this.  If no due date was selected, checkSettings should catch it and prevent card creation from continuing.
+    var dueDate = settings.today.add(dueDateSelected, 'd'); //Find dueDate by adding number of days necessary to the date recorded when the page was loaded (should generally be pretty close to when the card is created [in theory]).  Today adds 0, tomorrow adds 1, etc.  The values of the due date question radio buttons are the number of days to get to them (it takes 0 days to get to today, 1 to get to tomorrow, etc.)
+    //TODO: if it's now the next day, confirm the actual date the user wants for the due date
+    var dueHour = settings.dueDateTime.substring(0, 2); //get the hour for the due date from settings
+    var dueMin = settings.dueDateTime.substring(2, 4); //get the minute for the due date from settings
+    if (settings.debugMode) {
+        console.log("dueDate: " + dueDate);
+        console.log("dueHour: " + dueHour);
+        console.log("dueMin: " + dueMin);
+    }
+    //finish setting up the due date
+    dueDate.hour(dueHour);
+    dueDate.minutes(dueMin);
+    dueDate.seconds(0); //set seconds and milliseconds to 0 so that the due date is for exactly the hour and minute specified
+    dueDate.milliseconds(0);
+
+    var assignmentName = document.querySelector('input[id="card-name"]').value; //get the assignment name
+
+    //actually send the card to Trello
+    var trelloRequest = new XMLHttpRequest();
+    var url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=" + assignmentName + "&pos=bottom&due=" + dueDate + "&token=" + settings.TRELLO_TOKEN + "&idList=" + listSelected + "&idMembers=" + settings.TRELLO_USER_ID;
+    //TO DO: add ability to select desired list in advance
+    if (settings.debugMode) {
+        console.log(url);
+    }
+    trelloRequest.addEventListener("load", success, false); //keep track of status
+    trelloRequest.addEventListener("error", error, false);
+    //TODO: Add better error handling.  Currently, requests that return "401 (Unauthorized)" are marked successful
+    trelloRequest.open("POST", url);
+    trelloRequest.send();
 }
 
 //# sourceMappingURL=script-compiled.js.map
