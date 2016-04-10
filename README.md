@@ -5,6 +5,17 @@ An HTML file on your phone that lets you quickly create Trello cards with automa
 
 Note: you don't need the script.js file for Homework Card Creator for Trello to work properly.  It's just here so that the Javascript can be analyzed by [Codacy](http://codacy.com).
 
+About v0.2.0
+--------------
+v0.2.0 is contains big changes to Homework Card Creator for Trello.  The release notes will have all the details, but here's the gist of what's planned:
+- ES2015 is now used for Javascript development.  However, to maintain compatibility with browsers, the actual Javascript that gets used is converted back to ES5.1 using Babel.
+- For development purposes, Javscript has been split out of the main file.  The new files are index.html for the page HTML, moment.js for working with dates, script.js for communication with the Trello API, and index-end-of-file.html to close up index.html.  These files get concatenated into hw-card-creator-compiled.html which is then placed in the /build directory.
+- Multiple Trello lists will now be able to reside in one file, rather than having one file for each list.
+- Issue #8 will be fixed.
+- Form fields will emptied when a card is created successfully.
+- client.js from the Trello API may be used.
+- The font may be changed to Roboto.
+
 Current Limitations
 ===================
  - See [#4](https://github.com/evan10s/homework-card-creator-for-trello/issues/4)

@@ -1,10 +1,3 @@
-/*
- * Homework Card Creator for Trello 
- * Build date 27-Sep-2015 1:42pm
- * Version v1.0.2
- * Evan Strat
- * Note: this file is just so that Codacy can analyze the Javascript for this project
- */
 var settings = {
     //variable names that look LIKE_THIS are constants and generally only need to be set once
     firstRun: true, //this will display some instructions to get started on the page; set this to false to hide them.  TODO: make this actually do something
@@ -16,7 +9,7 @@ var settings = {
     TRELLO_BOARD_ID: "ENTER_TRELLO_BOARD_ID_HERE", //the 8-character string after 'b/' in the URL of the Trello board you want these cards to appear on
 
     //these settings control which list(s) your cards are added to on the board you specified
-    TRELLO_LISTS: ["ENTER_LIST_IDS", "LIST_ID2"], //an array of lists you want to add cards to.  A dropdown menu to select the list you want will appear at the top if more than one is here.  An error message will appear if no list is specified here.  Do not remove the brackets around the list ID, even if you only specify one list.
+    TRELLO_LISTS: [{ LIST_NAME: "FRIENDLY_NAME", LIST_ID: "ENTER_LIST_ID_HERE" },{ LIST_NAME: "FRIENDLY_NAME_LIST2", LIST_ID: "ENTER_SECOND_LIST_ID_HERE" } ], //an array of lists you want to add cards to.  Put a nickname for the list in LIST_NAME and the list's ID in LIST_ID.  A dropdown menu to select the list you want will appear at the top if more than one is here.  An error message will appear if no list is specified here.  Do not remove the brackets around the list ID, even if you only specify one list.
     listAddType: "one", //allowed values: "one" - only add the card to the selected list, "all" - add the card to all lists specified in TRELLO_LISTS
 
     //these settings control how the card is generated; all can be dynamic; the intent is to save you time from having to do repetitive things, like adding due dates (the whole reason this was created), or assigning users, adding labels, adding a description, etc.
@@ -33,17 +26,29 @@ var settings = {
     today: "" //DO NOT CHANGE, but either way, this gets overwritten on load with the current date and time.
 };
 
+
 function initialize() {
     if (settings.descriptionType === "custom") {
         document.getElementById('description-group').insertAdjacentHTML('afterbegin', '<label for="description" class="item-title">Description:</label><br /><input id="description" type="text" /><br /><br />');
     }
 
+    if (settings.TRELLO_LISTS.length > 1) {
+
+        let listsToAdd = "";
+        for (let i = 0; i < settings.TRELLO_LISTS.length; i++) {
+            listsToAdd += '<input type="radio" id="list' + i + '" value="' + settings.TRELLO_LISTS[i].LIST_ID + '" name="lists" /><label for="list' + i + '">' + settings.TRELLO_LISTS[i].LIST_NAME + '</label><br/>';
+        }
+
+        document.getElementById('list-options').insertAdjacentHTML('beforeend', listsToAdd + '<br />')
+    } else {
+        document.getElementById('list-options').className = "hidden";
+    }
     //configure due date picker
-    var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     settings.today = moment();
-    var todayDayName = settings.today.day();
-    var relativeDays = []; //the days array translated so that today is the first element
-    for (var i = todayDayName; i <= todayDayName + 6; i++) { //todayDayName + 6 can end the loop because Saturday (todayDayName = 6) is when the value of i will be the highest.  The loop continues to 6 more days (Sunday, Monday, Tuesday, Wednesday, Thursday, Friday) before it needs to end.  Thus, if Saturday = 6, and we add 6, we get 6+6 = 12; the last day is Friday (5), and 12-7 = 5; when we reach Friday i will be 12, and the loop will end.
+    let todayDayName = settings.today.day();
+    let relativeDays = []; //the days array translated so that today is the first element
+    for (let i = todayDayName; i <= todayDayName + 6; i++) { //todayDayName + 6 can end the loop because Saturday (todayDayName = 6) is when the value of i will be the highest.  The loop continues to 6 more days (Sunday, Monday, Tuesday, Wednesday, Thursday, Friday) before it needs to end.  Thus, if Saturday = 6, and we add 6, we get 6+6 = 12; the last day is Friday (5), and 12-7 = 5; when we reach Friday i will be 12, and the loop will end.
         if (i > 6) { //if i is greater than 6, subtract 7 (say, if today is Friday, and i starts at 5, then Sunday will be i = 7, so 7-7 = 0, which is correct)
             relativeDays.push(days[i - 7])
         } else {
@@ -51,14 +56,13 @@ function initialize() {
         }
     }
 
-    var toAdd = "";
-    var dayNames = relativeDays;
+    let toAdd = "";
+    let dayNames = relativeDays;
     dayNames[0] = "Next " + dayNames[0];
     if (settings.debugMode) {
         console.log(dayNames);
     }
     var dayToAdd;
-    var dayValue;
     for (i = 2; i <= relativeDays.length; i++) { //start at the day after tomorrow
         if (i > 6) {
             j = i - 7;
@@ -66,7 +70,7 @@ function initialize() {
         } else {
             dayToAdd = dayNames[i];
         }
-        toAdd += '<input type="radio" id="due-date-plus' + i + '" value="' + dayValue + '" name="due-date"> <label for="due-date-plus' + i + '">' + dayToAdd + '</label><br />'; //this can apply to any value of i because only the day of the week is part of the array and needs to be corrected when i >= 7.  the id's for the radio buttons use plus_, and the Next [today] value is 7 days from now, so it should have 7 subtracted from it
+        toAdd += '<input type="radio" id="due-date-plus' + i + '" value="' + i + '" name="due-date"> <label for="due-date-plus' + i + '">' + dayToAdd + '</label><br />'; //this can apply to any value of i because only the day of the week is part of the array and needs to be corrected when i >= 7.  the id's for the radio buttons use plus_, and the Next [today] value is 7 days from now, so it should have 7 subtracted from it
 
     }
 
@@ -87,12 +91,20 @@ function createCard() {
         console.error("Card creation cannot continue because the settings check failed.");
         return false;
     }
+    settings.today = moment(); //make sure we're starting with the current date
 
-    var dueDateSelected = document.querySelector('input[name="due-date"]:checked').value; //We can assume this has a value because that was verified in the checkSettings() function that ran before this.  If no due date was selected, checkSettings should catch it and prevent card creation from continuing.
-    var dueDate = settings.today.add(dueDateSelected, 'd'); //Find dueDate by adding number of days necessary to the date recorded when the page was loaded (should generally be pretty close to when the card is created [in theory]).  Today adds 0, tomorrow adds 1, etc.  The values of the due date question radio buttons are the number of days to get to them (it takes 0 days to get to today, 1 to get to tomorrow, etc.)
+    let listSelected;
+    if (settings.TRELLO_LISTS.length > 1) {
+        listSelected = document.querySelector('input[name="lists"]:checked').value;
+    } else {
+        listSelected = settings.TRELLO_LISTS[0].LIST_ID;
+    }
+
+    let dueDateSelected = document.querySelector('input[name="due-date"]:checked').value; //We can assume this has a value because that was verified in the checkSettings() function that ran before this.  If no due date was selected, checkSettings should catch it and prevent card creation from continuing.
+    let dueDate = settings.today.add(dueDateSelected, 'd'); //Find dueDate by adding number of days necessary to the date recorded when the page was loaded (should generally be pretty close to when the card is created [in theory]).  Today adds 0, tomorrow adds 1, etc.  The values of the due date question radio buttons are the number of days to get to them (it takes 0 days to get to today, 1 to get to tomorrow, etc.)
     //TODO: if it's now the next day, confirm the actual date the user wants for the due date
-    var dueHour = settings.dueDateTime.substring(0, 2); //get the hour for the due date from settings
-    var dueMin = settings.dueDateTime.substring(2, 4); //get the minute for the due date from settings
+    let dueHour = settings.dueDateTime.substring(0, 2); //get the hour for the due date from settings
+    let dueMin = settings.dueDateTime.substring(2, 4); //get the minute for the due date from settings
     if (settings.debugMode) {
         console.log("dueDate: " + dueDate);
         console.log("dueHour: " + dueHour);
@@ -104,11 +116,11 @@ function createCard() {
     dueDate.seconds(0); //set seconds and milliseconds to 0 so that the due date is for exactly the hour and minute specified
     dueDate.milliseconds(0);
 
-    var assignmentName = document.querySelector('input[id="card-name"]').value; //get the assignment name
+    let assignmentName = document.querySelector('input[id="card-name"]').value; //get the assignment name
 
     //actually send the card to Trello
-    var trelloRequest = new XMLHttpRequest();
-    var url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=" + assignmentName + "&pos=bottom&due=" + dueDate + "&token=" + settings.TRELLO_TOKEN + "&idList=" + settings.TRELLO_LISTS[0] + "&idMembers=" + settings.TRELLO_USER_ID;
+    let trelloRequest = new XMLHttpRequest();
+    let url = "https://trello.com/1/cards?key=" + settings.TRELLO_DEVELOPER_KEY + "&name=" + assignmentName + "&pos=bottom&due=" + dueDate + "&token=" + settings.TRELLO_TOKEN + "&idList=" + listSelected + "&idMembers=" + settings.TRELLO_USER_ID;
     //TO DO: add ability to select desired list in advance
     if (settings.debugMode) {
         console.log(url);
@@ -143,6 +155,7 @@ function checkSettings() {
     } catch (e) {
         problems.push("No due date was selected.  You must select a due date to create the card.  If you know what you are doing, you can also change the value of the due date that is sent in the request to Trello to null and comment out this try-catch statement.");
     }
+    
 
     //make sure an assignment name was specified
     if (document.querySelector('input[id="card-name"]').value === "") {
@@ -157,7 +170,7 @@ function checkSettings() {
         for (i = 0; i < problems.length; i++) {
             console.error(problems[i]);
         }
-        alert(problems.length + " error" + plural + " occurred.  See the console for more information.  You must solve the errors to create cards.");
+        alert(problems.length + " error" + plural + " occurred.  See the console for more information.  You must resolve the errors to create cards.");
     } else {
         return true; //passed
     }
@@ -166,13 +179,14 @@ function checkSettings() {
 //trelloRequest callbacks
 function success(evt) {
     alert("Success!  Card created.");
+
+    document.getElementById('card-info').reset(); //clear the form
 }
 
 function error(evt) {
-    alert("Eek!  Something went wrong: " + evt);
+    alert("Eek!  There was a problem that prevented your card from being creator.  Check your internet connection and make sure there are no accents or other special characters in the card name, then try again.");
     if (settings.debugMode) {
         console.error("The request failed.");
         console.error(evt);
     }
-
 }

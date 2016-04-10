@@ -1,0 +1,90 @@
+<!--
+* Homework Card Creator for Trello 
+* Build date 9-Apr-2016 10:52pm
+* Version v1.0.2
+* Evan Strat
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Homework Trello Card Creator</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <style>
+        body {
+            font-family: "Helvetica Neue", sans-serif, serif;
+            width: auto;
+        }
+        
+        label.item-title {
+            font-weight: bold;
+        }
+        
+        input[type="radio"] {
+            margin-bottom: 7px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 767px) {
+            input[type="text"] {
+                width: 95vw;
+            }
+            button {
+                margin-top: 10px;
+                width: 95vw;
+            }
+        }
+
+    </style>
+</head>
+
+<body onload="initialize()">
+    <em id="loading">Generating form...</em>
+    <div id="app" class="hidden">
+        <strong>Quickly create a Trello card</strong>
+        <br />and use these attributes:
+        <br />
+        <br />
+        <form id="card-info">
+            <div id="list-options">
+                <label class="item-title">List:</label>
+                <br />
+                <em>The card will be added to this list on your Trello board.</em>
+                <br />
+            </div>
+
+            <div id="card-name-group">
+                <label for="card-name" class="item-title">Assignment name:</label>
+                <br />
+                <input id="card-name" type="text" />
+                <br />
+                <br />
+            </div>
+
+            <div id="description-group">
+            </div>
+
+            <div id="due-date-group">
+                <label class="item-title">Due date:</label>
+                <br />
+                <em>The card due date will be this day at the time defined in Settings.</em>
+
+                <div id="due-date-days">
+                    <input type="radio" id="due-date-plus0" value="0" name="due-date">
+                    <label for="due-date-plus0">Today</label>
+                    <br />
+                    <input type="radio" id="due-date-plus1" value="1" name="due-date">
+                    <label for="due-date-plus1">Tomorrow</label>
+                    <br />
+                </div>
+            </div>
+            <button onclick="createCard(); return false;">Create card</button>
+            <!-- return false for the button prevemts page reload on submit.  The form is largely generated on-the-fly via Javascipt. -->
+        </form>
+    </div>
+    <!-- moment.js is included within this file to prevent issues with referencing other files when viewing HTML files locally on a device.  See README.md for this project to see the moment.js license.-->
+    <script>
