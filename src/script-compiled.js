@@ -127,6 +127,14 @@ function checkSettings() {
     } catch (e) {
         problems.push("No due date was selected.  You must select a due date to create the card.  If you know what you are doing, you can also change the value of the due date that is sent in the request to Trello to null and comment out this try-catch statement.");
     }
+    if (settings.TRELLO_LISTS.length > 1) {
+        try {
+            //make sure due date selected
+            document.querySelector('input[name="lists"]:checked').value; //see if a due date was selected
+        } catch (e) {
+            problems.push("No list selected.  Please select a list and try again.");
+        }
+    }
 
     //make sure an assignment name was specified
     if (document.querySelector('input[id="card-name"]').value === "") {
