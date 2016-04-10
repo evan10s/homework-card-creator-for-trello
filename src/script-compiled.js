@@ -40,7 +40,7 @@ function initialize() {
             listsToAdd += '<input type="radio" id="list' + _i + '" value="' + settings.TRELLO_LISTS[_i].LIST_ID + '" name="lists" /><label for="list' + _i + '">' + settings.TRELLO_LISTS[_i].LIST_NAME + '</label><br/>';
         }
 
-        document.getElementById('list-options').insertAdjacentHTML('beforeend', listsToAdd);
+        document.getElementById('list-options').insertAdjacentHTML('beforeend', listsToAdd + '<br />');
     } else {
         document.getElementById('list-options').className = "hidden";
     }
@@ -96,7 +96,7 @@ function createCard() {
     settings.today = moment(); //make sure we're starting with the current date
 
     var listSelected = void 0;
-    if (settings.TRELLO_LISTS.length > 0) {
+    if (settings.TRELLO_LISTS.length > 1) {
         listSelected = document.querySelector('input[name="lists"]:checked').value;
     } else {
         listSelected = settings.TRELLO_LISTS[0].LIST_ID;
@@ -182,10 +182,12 @@ function checkSettings() {
 //trelloRequest callbacks
 function success(evt) {
     alert("Success!  Card created.");
+
+    document.getElementById('card-info').reset(); //clear the form
 }
 
 function error(evt) {
-    alert("Eek!  Something went wrong: " + evt);
+    alert("Eek!  There was a problem that prevented your card from being creator.  Check your internet connection and make sure there are no accents or other special characters in the card name, then try again.");
     if (settings.debugMode) {
         console.error("The request failed.");
         console.error(evt);
