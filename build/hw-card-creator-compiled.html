@@ -3501,7 +3501,7 @@ function success(evt) {
 }
 
 function error(evt) {
-    alert("Eek!  There was a problem that prevented your card from being creator.  Check your internet connection and make sure there are no accents in the card name, then try again.");
+    alert("Eek!  There was a problem that prevented your card from being creator.  Check your internet connection and make sure there are no accents or other special characters in the card name, then try again.");
     if (settings.debugMode) {
         console.error("The request failed.");
         console.error(evt);
