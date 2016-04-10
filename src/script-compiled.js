@@ -33,7 +33,7 @@ function initialize() {
         document.getElementById('description-group').insertAdjacentHTML('afterbegin', '<label for="description" class="item-title">Description:</label><br /><input id="description" type="text" /><br /><br />');
     }
 
-    if (settings.TRELLO_LISTS.length > 0) {
+    if (settings.TRELLO_LISTS.length > 1) {
 
         var listsToAdd = "";
         for (var _i = 0; _i < settings.TRELLO_LISTS.length; _i++) {
@@ -41,6 +41,8 @@ function initialize() {
         }
 
         document.getElementById('list-options').insertAdjacentHTML('beforeend', listsToAdd);
+    } else {
+        document.getElementById('list-options').className = "hidden";
     }
     //configure due date picker
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -63,8 +65,7 @@ function initialize() {
     if (settings.debugMode) {
         console.log(dayNames);
     }
-    var dayToAdd = void 0;
-    var dayValue = void 0;
+    var dayToAdd;
     for (i = 2; i <= relativeDays.length; i++) {
         //start at the day after tomorrow
         if (i > 6) {
@@ -73,7 +74,7 @@ function initialize() {
         } else {
             dayToAdd = dayNames[i];
         }
-        toAdd += '<input type="radio" id="due-date-plus' + i + '" value="' + dayValue + '" name="due-date"> <label for="due-date-plus' + i + '">' + dayToAdd + '</label><br />'; //this can apply to any value of i because only the day of the week is part of the array and needs to be corrected when i >= 7.  the id's for the radio buttons use plus_, and the Next [today] value is 7 days from now, so it should have 7 subtracted from it
+        toAdd += '<input type="radio" id="due-date-plus' + i + '" value="' + i + '" name="due-date"> <label for="due-date-plus' + i + '">' + dayToAdd + '</label><br />'; //this can apply to any value of i because only the day of the week is part of the array and needs to be corrected when i >= 7.  the id's for the radio buttons use plus_, and the Next [today] value is 7 days from now, so it should have 7 subtracted from it
     }
 
     document.getElementById('due-date-days').insertAdjacentHTML('beforeend', toAdd);

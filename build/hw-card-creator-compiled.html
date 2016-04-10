@@ -1,6 +1,6 @@
 <!--
 * Homework Card Creator for Trello 
-* Build date 27-Sep-2015 1:42pm
+* Build date 9-Apr-2016 10:52pm
 * Version v1.0.2
 * Evan Strat
 -->
@@ -56,7 +56,7 @@
                 <em>The card will be added to this list on your Trello board.</em>
                 <br />
             </div>
-            <br />
+
             <div id="card-name-group">
                 <label for="card-name" class="item-title">Assignment name:</label>
                 <br />
@@ -3337,34 +3337,6 @@ var settings = {
     labelsToAdd: [], //enter label names in this array to have them added to your card, if you wish.  Leave blank to add no labels.  Enclose label names in quotes ,(e.g., label named Important would be entered as "Important").
 
     //developer - don't change these values unless you know what you're doing
-    debugMode: true, //log various things that are useful for debugging in the console
-    demoMode: false, //simulate various end results of requests.  accepted values: "success" - pretend that the request succeeded; "ANY_ERROR_CODE" - enter an error code used by this app, and the app will pretend the request failed with that error code
-    today: "" //DO NOT CHANGE, but either way, this gets overwritten on load with the current date and time.
-};
-
-settings = {
-    //variable names that look LIKE_THIS are constants and generally only need to be set once
-    firstRun: false, //this will display some instructions to get started on the page; set this to false to hide them.  TODO: make this actually do something
-    //these settings control how this app communicates with Trello, via the Trello API
-    TRELLO_DEVELOPER_KEY: "2a548e06020803a8928bab003e4217d8", //find yours at https://trello.com/1/appKey/generate
-    TRELLO_TOKEN: "a578cc552b5c3abd7a191b2e2a358afc263226b19f5c222afebd82c42b186634",
-    TRELLO_APP_NAME: "Trello Homework Card Creator", //You can set this to whatever you want, ideally something you'll recognize in the future
-    TRELLO_READWRITE_AUTH_LENGTH: "never", //This determines how long you'll give yourself (via this app) read/write access to your Trello account.  If you are just trying this out, you can do "1day"; if you want this to work for the next month, enter "30days"; if you want this to work forever, enter "never"
-    TRELLO_BOARD_ID: "95UibD61", //the 8-character string after 'b/' in the URL of the Trello board you want these cards to appear on
-
-    //these settings control which list(s) your cards are added to on the board you specified
-    TRELLO_LISTS: [{ LIST_ID: "55ca54843ecf87afe4881a9d", LIST_NAME: "Physics" }, { LIST_ID: "55ca54843ecf87afe4881a9d", LIST_NAME: "English" }, { LIST_ID: "55ca54843ecf87afe4881a9d", LIST_NAME: "Math" }, { LIST_ID: "55ca54843ecf87afe4881a9d", LIST_NAME: "Robotics" }, { LIST_ID: "55ca54843ecf87afe4881a9d", LIST_NAME: "French" }], //an array of lists you want to add cards to.  A dropdown menu to select the list you want will appear at the top if more than one is here.  An error message will appear if no list is specified here.  Do not remove the brackets around the list ID, even if you only specify one list.
-    listAddType: "one", //allowed values: "one" - only add the card to the selected list, "all" - add the card to all lists specified in TRELLO_LISTS
-
-    //these settings control how the card is generated; all can be dynamic; the intent is to save you time from having to do repetitive things, like adding due dates (the whole reason this was created), or assigning users, adding labels, adding a description, etc.
-    assignMyself: true, //allowed values: true - use TRELLO_USER_ID to assign yourself to the card you create; useful for showing cards in the Trello Android widget
-    TRELLO_USER_ID: "5505d4790e4b37dadea5cb00", //if assign myself is true, enter your Trello user id here.  You can find it by looking at one of your cards JSON outputs
-    dueDateTime: "0900", //the time when cards will be due, on the date you specify.  Use 24 hour time; 9AM = 0900, 9PM=2100
-    descriptionType: "attribution", //allowed values (You can program your own, too.): "attribution" - will put an italicized note saying the card was created using Trello Homework Card Creator, with a link back to the GitHub repository.  You can change this if you don't like it.  "datetime" - will add an italicized date and time that the card was created.  "none" - will show nothing and won't prompt for a description in the form  "custom" - will show a small textarea in the form where you can enter your own description, if you are so inclined
-    autoAddLabels: false, //allowed values: "true" - add the labels in LabelsToAdd to the card that is created; "false" (default) - don't auto-add labels
-    labelsToAdd: [], //enter label names in this array to have them added to your card, if you wish.  Leave blank to add no labels.  Enclose label names in quotes ,(e.g., label named Important would be entered as "Important").
-
-    //developer - don't change these values unless you know what you're doing
     debugMode: false, //log various things that are useful for debugging in the console
     demoMode: false, //simulate various end results of requests.  accepted values: "success" - pretend that the request succeeded; "ANY_ERROR_CODE" - enter an error code used by this app, and the app will pretend the request failed with that error code
     today: "" //DO NOT CHANGE, but either way, this gets overwritten on load with the current date and time.
@@ -3375,7 +3347,7 @@ function initialize() {
         document.getElementById('description-group').insertAdjacentHTML('afterbegin', '<label for="description" class="item-title">Description:</label><br /><input id="description" type="text" /><br /><br />');
     }
 
-    if (settings.TRELLO_LISTS.length > 0) {
+    if (settings.TRELLO_LISTS.length > 1) {
 
         var listsToAdd = "";
         for (var _i = 0; _i < settings.TRELLO_LISTS.length; _i++) {
@@ -3383,6 +3355,8 @@ function initialize() {
         }
 
         document.getElementById('list-options').insertAdjacentHTML('beforeend', listsToAdd);
+    } else {
+        document.getElementById('list-options').className = "hidden";
     }
     //configure due date picker
     var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -3405,8 +3379,7 @@ function initialize() {
     if (settings.debugMode) {
         console.log(dayNames);
     }
-    var dayToAdd = void 0;
-    var dayValue = void 0;
+    var dayToAdd;
     for (i = 2; i <= relativeDays.length; i++) {
         //start at the day after tomorrow
         if (i > 6) {
@@ -3415,7 +3388,7 @@ function initialize() {
         } else {
             dayToAdd = dayNames[i];
         }
-        toAdd += '<input type="radio" id="due-date-plus' + i + '" value="' + dayValue + '" name="due-date"> <label for="due-date-plus' + i + '">' + dayToAdd + '</label><br />'; //this can apply to any value of i because only the day of the week is part of the array and needs to be corrected when i >= 7.  the id's for the radio buttons use plus_, and the Next [today] value is 7 days from now, so it should have 7 subtracted from it
+        toAdd += '<input type="radio" id="due-date-plus' + i + '" value="' + i + '" name="due-date"> <label for="due-date-plus' + i + '">' + dayToAdd + '</label><br />'; //this can apply to any value of i because only the day of the week is part of the array and needs to be corrected when i >= 7.  the id's for the radio buttons use plus_, and the Next [today] value is 7 days from now, so it should have 7 subtracted from it
     }
 
     document.getElementById('due-date-days').insertAdjacentHTML('beforeend', toAdd);
