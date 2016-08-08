@@ -1,5 +1,5 @@
 # Homework Card Creator for Trello
-[![Codacy Badge](https://api.codacy.com/project/badge/49cfc72ab2204f79922fa9040bcb8549)](https://www.codacy.com/app/evan-strat/homework-card-creator-for-trello)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bee2a4dfe6164d49939ff954c5fb4d36)](https://www.codacy.com/app/evan-strat/homework-card-creator-for-trello?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=evan10s/homework-card-creator-for-trello&amp;utm_campaign=Badge_Grade)
 
 An HTML file on your phone that lets you quickly create Trello cards with automatically generated attributes, like due dates or labels, to help you save time.
 
