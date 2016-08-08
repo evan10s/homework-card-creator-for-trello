@@ -19,7 +19,7 @@ Android devices
 3. After you have downloaded Open in Browser, open the app and pick the browser you want to open index.html with.  (Note: there's no Save button.  You can just close the app to save your preference.)
 4. Now, get the index.html file onto your device.  Here's the easiest way:
  4.1. Download the ZIP file of the latest Homework Card Creator for Trello releae.  Unzip it on your computer.
- 4.2. Change the settings in index.html (they start on line 3312, after moment.js).  You'll need to specify values for any variables with all CAPS names.  (This will be simpler in the future.)
+ 4.2. Change the settings in index.html (they start on line 3317, after moment.js).  You'll need to specify values for any variables with all CAPS names.  (This will be simpler in the future.)
  4.3. Transfer the file to your device.  You can email it, add it a cloud storage service, etc.
  4.4. Save the file to your device.  The option might be called "Download" or "Export."
 5. Open the File Manager app on your device.  Go to the Download (or Downloads) folder (or wherever you saved it) and select the index.htm file you downloaded to your device.  Find the Share option and tap on it.
@@ -30,7 +30,7 @@ Android devices
 
 iOS devices
 -----------
-1. Configure Homework Card Creator for Trello by downloading it from GitHub and adding in the required information starting at line 3312 (or so, after moment.js)
+1. Configure Homework Card Creator for Trello by downloading it from GitHub and adding in the required information starting at line 3317
 2. Upload the file to Dropbox or a similar file sharing service.
 3. You should be able to view the file on your phone using the file sharing service's app.  Alternatively, make the file public and bookmark the link on your phone.
 
