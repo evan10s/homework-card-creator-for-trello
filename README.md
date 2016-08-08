@@ -30,7 +30,9 @@ Android devices
 
 iOS devices
 -----------
-At this time, it doesn't seem like there's a good way to use Homework Card Creator for Trello on iOS devices, so I can't provide instructions.
+1. Configure Homework Card Creator for Trello by downloading it from GitHub and adding in the required information starting at line 3312 (or so, after moment.js)
+2. Upload the file to Dropbox or a similar file sharing service.
+3. You should be able to view the file on your phone using the file sharing service's app.  Alternatively, make the file public and bookmark the link on your phone.
 
 FAQ
 ===
